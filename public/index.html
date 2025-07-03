@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamMaker - Ultimate Game Development Platform</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0a0a0f;
+            --secondary-bg: #1a1a2e;
+            --tertiary-bg: #16213e;
+            --accent-primary: #8b4513;
+            --accent-secondary: #4b0082;
+            --accent-tertiary: #22c55e;
+            --text-primary: #e8e3d8;
+            --text-secondary: rgba(232, 227, 216, 0.7);
+            --border-color: rgba(139, 69, 19, 0.3);
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --glass-bg: rgba(13, 17, 23, 0.8);
+            --glass-border: rgba(139, 69, 19, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 20% 80%, var(--primary-bg) 0%, var(--secondary-bg) 40%, var(--tertiary-bg) 100%);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Main Layout */
+        .app-container {
+            display: grid;
+            grid-template-areas: 
+                "header header header"
+                "sidebar main panels";
+            grid-template-columns: 300px 1fr 380px;
+            grid-template-rows: 64px 1fr;
+            height: 100vh;
+            gap: 1px;
+            background: var(--border-color);
+        }
+
+        /* Enhanced Header */
+        .app-header {
+            grid-area: header;
+            background: linear-gradient(135deg, var(--glass-bg) 0%, rgba(22, 33, 62, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+
+        .header-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px;
+            border-left: 1px solid var(--glass-border);
+        }
+
+        .toolbar-group:first-child {
+            border-left: none;
+        }
+
+        .btn {
+            background: rgba(139, 69, 19, 0.6);
+            border: 1px solid rgba(139, 69, 19, 0.4);
+            border-radius: 10px;
+            padding: 10px 18px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background: rgba(139, 69, 19, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0px);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+            border-color: var(--accent-secondary);
+            box-shadow: 0 4px 15px rgba(75, 0, 130, 0.3);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, var(--accent-tertiary) 0%, #16a34a 100%);
+            border-color: var(--accent-tertiary);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        /* Enhanced Sidebar */
+        .app-sidebar {
+            grid-area: sidebar;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-right: 1px solid var(--glass-border);
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            background: rgba(139, 69, 19, 0.1);
+            padding: 18px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(139, 69, 19, 0.15);
+            color: var(--text-primary);
+        }
+
+        .section-content {
+            padding: 16px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .scene-tree, .asset-list {
+            padding: 0 24px;
+        }
+
+        .tree-item, .asset-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .tree-item:hover, .asset-item:hover {
+            background: rgba(139, 69, 19, 0.15);
+            transform: translateX(4px);
+        }
+
+        .tree-item.selected, .asset-item.selected {
+            background: rgba(139, 69, 19, 0.25);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(139, 69, 19, 0.2);
+        }
+
+        .tree-icon, .asset-icon {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        /* Enhanced Main Content */
+        .app-main {
+            grid-area: main;
+            background: var(--primary-bg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .main-toolbar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-groups {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-btn {
+            width: 44px;
+            height: 44px;
+            background: rgba(139, 69, 19, 0.2);
+            border: 1px solid rgba(139, 69, 19, 0.3);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .tool-btn:hover, .tool-btn.active {
+            background: rgba(139, 69, 19, 0.4);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.3);
+        }
+
+        .viewport-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, rgba(22, 33, 62, 0.3) 100%);
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            background: transparent;
+        }
+
+        .viewport-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(139, 69, 19, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(75, 0, 130, 0.03) 0%, transparent 50%);
+        }
+
+        /* Enhanced Right Panels */
+        .app-panels {
+            grid-area: panels;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-left: 1px solid var(--glass-border);
+        }
+
+        .panel-tabs {
+            display: flex;
+            background: rgba(22, 33, 62, 0.8);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .panel-tab {
+            flex: 1;
+            padding: 16px 20px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-right: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .panel-tab:last-child {
+            border-right: none;
+        }
+
+        .panel-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .panel-tab.active {
+            background: rgba(139, 69, 19, 0.2);
+            color: var(--text-primary);
+        }
+
+        .panel-tab.active::after {
+            transform: scaleX(1);
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .property-group {
+            margin-bottom: 24px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .property-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .property-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .property-input:focus {
+            border-color: rgba(139, 69, 19, 0.6);
+            background: rgba(139, 69, 19, 0.05);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        /* Enhanced Status Bar */
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 36px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            z-index: 1000;
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-color);
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--success-color);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        /* Enhanced Welcome Screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at center, rgba(22, 33, 62, 0.95) 0%, rgba(10, 10, 15, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: all 0.5s ease;
+        }
+
+        .welcome-content {
+            text-align: center;
+            max-width: 700px;
+            padding: 48px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .welcome-logo {
+            font-size: 64px;
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(30deg); }
+        }
+
+        .welcome-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .welcome-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Loading animation */
+        .loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10001;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(139, 69, 19, 0.2);
+            border-top: 3px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Enhanced Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Enhanced Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-content {
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Engine Status Indicator */
+        .engine-status {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--text-primary);
+            font-size: 12px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        .engine-status.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .engine-metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .engine-metric:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .app-container {
+                grid-template-columns: 280px 1fr 340px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .app-container {
+                grid-template-columns: 260px 1fr 320px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-areas: 
+                    "header header"
+                    "main main"
+                    "sidebar panels";
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 64px 1fr 300px;
+            }
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(139, 69, 19, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 69, 19, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Indicator -->
+    <div class="loading-indicator" id="loadingIndicator">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-content fade-in">
+            <div class="welcome-logo">🎮✨</div>
+            <h1 class="welcome-title">Welcome to DreamMaker</h1>
+            <p class="welcome-subtitle">
+                The ultimate collaborative game development platform that surpasses RPGMaker and TIC-80. 
+                Create, collaborate, and publish games with AI assistance, real-time multiplayer editing, 
+                and professional-grade tools.
+            </p>
+            <div class="welcome-actions">
+                <button class="btn primary" onclick="createNewProject()">🚀 New Project</button>
+                <button class="btn" onclick="openProject()">📁 Open Project</button>
+                <button class="btn" onclick="browseTemplates()">📚 Templates</button>
+                <button class="btn" onclick="startTutorial()">🎓 Tutorial</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Engine Status Indicator -->
+    <div class="engine-status" id="engineStatus">
+        <div class="engine-metric">
+            <span>Engine:</span>
+            <span id="engineState">Initializing...</span>
+        </div>
+        <div class="engine-metric">
+            <span>FPS:</span>
+            <span id="engineFPS">0</span>
+        </div>
+        <div class="engine-metric">
+            <span>Entities:</span>
+            <span id="engineEntities">0</span>
+        </div>
+        <div class="engine-metric">
+            <span>Memory:</span>
+            <span id="engineMemory">0MB</span>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="app-container" id="mainApp" style="display: none;">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <div class="logo-icon">🎮</div>
+                <span>DreamMaker</span>
+            </div>
+            
+            <div class="header-toolbar">
+                <div class="toolbar-group">
+                    <button class="btn" onclick="saveProject()" title="Save Project (Ctrl+S)">💾 Save</button>
+                    <button class="btn" onclick="undoAction()" title="Undo (Ctrl+Z)">↶ Undo</button>
+                    <button class="btn" onclick="redoAction()" title="Redo (Ctrl+Y)">↷ Redo</button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <button class="btn success" onclick="playGame()" title="Play Game">▶ Play</button>
+                    <button class="btn" onclick="debugGame()" title="Debug Mode">🐛 Debug</button>
+                    <button class="btn" onclick="buildGame()" title="Build Game">🔨 Build</button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <button class="btn" onclick="shareProject()" title="Share Project">🔗 Share</button>
+                    <button class="btn primary" onclick="publishGame()" title="Publish Game">🚀 Publish</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="app-sidebar">
+            <div class="sidebar-section">
+                <div class="section-header" onclick="toggleSection('scene')">
+                    <span>🎬 Scene Hierarchy</span>
+                    <span id="sceneToggle">▼</span>
+                </div>
+                <div class="section-content" id="sceneSection">
+                    <div class="scene-tree" id="sceneTree">
+                        <!-- Will be populated by the engine -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-header" onclick="toggleSection('assets')">
+                    <span>📦 Assets</span>
+                    <span id="assetsToggle">▼</span>
+                </div>
+                <div class="section-content" id="assetsSection">
+                    <div class="asset-list" id="assetList">
+                        <!-- Will be populated by asset manager -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-header" onclick="toggleSection('components')">
+                    <span>🧩 Components</span>
+                    <span id="componentsToggle">▼</span>
+                </div>
+                <div class="section-content" id="componentsSection">
+                    <div class="asset-list" id="componentList">
+                        <div class="asset-item" onclick="addComponent('Transform')">
+                            <div class="asset-icon">📍</div>
+                            <span>Transform</span>
+                        </div>
+                        <div class="asset-item" onclick="addComponent('Sprite')">
+                            <div class="asset-icon">🎨</div>
+                            <span>Sprite Renderer</span>
+                        </div>
+                        <div class="asset-item" onclick="addComponent('Physics')">
+                            <div class="asset-icon">⚡</div>
+                            <span>Physics Body</span>
+                        </div>
+                        <div class="asset-item" onclick="addComponent('Script')">
+                            <div class="asset-icon">📝</div>
+                            <span>Script</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <div class="main-toolbar">
+                <div class="tool-groups">
+                    <div class="tool-group">
+                        <div class="tool-btn active" onclick="setTool('select')" title="Select Tool (V)">⚊</div>
+                        <div class="tool-btn" onclick="setTool('move')" title="Move Tool (M)">✋</div>
+                        <div class="tool-btn" onclick="setTool('rotate')" title="Rotate Tool (R)">🔄</div>
+                        <div class="tool-btn" onclick="setTool('scale')" title="Scale Tool (S)">📏</div>
+                    </div>
+                    
+                    <div class="tool-group">
+                        <div class="tool-btn" onclick="setTool('paint')" title="Paint Tool (B)">🖌️</div>
+                        <div class="tool-btn" onclick="setTool('erase')" title="Erase Tool (E)">🧽</div>
+                        <div class="tool-btn" onclick="setTool('fill')" title="Fill Tool (F)">🪣</div>
+                    </div>
+                    
+                    <div class="tool-group">
+                        <div class="tool-btn" onclick="toggleGrid()" title="Grid Toggle (G)" id="gridBtn">⌗</div>
+                        <div class="tool-btn" onclick="toggleSnap()" title="Snap to Grid" id="snapBtn">🧲</div>
+                    </div>
+                </div>
+                
+                <div class="tool-group">
+                    <span style="color: var(--text-secondary); font-size: 14px;" id="zoomDisplay">Zoom: 100%</span>
+                    <input type="range" min="0.1" max="5" step="0.1" value="1" id="zoomSlider" onchange="updateZoom(this.value)" style="margin: 0 10px;">
+                </div>
+            </div>
+            
+            <div class="viewport-container">
+                <canvas id="gameCanvas" width="1200" height="800"></canvas>
+                <div class="viewport-overlay"></div>
+            </div>
+        </main>
+
+        <!-- Right Panels -->
+        <aside class="app-panels">
+            <div class="panel-tabs">
+                <div class="panel-tab active" onclick="switchPanel('inspector')">Inspector</div>
+                <div class="panel-tab" onclick="switchPanel('layers')">Layers</div>
+                <div class="panel-tab" onclick="switchPanel('animation')">Animation</div>
+            </div>
+            
+            <div class="panel-content" id="panelContent">
+                <!-- Inspector Panel -->
+                <div id="inspectorPanel">
+                    <div id="selectedEntityInfo">
+                        <h3>No Entity Selected</h3>
+                        <p>Select an entity in the scene to edit its properties.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <div class="status-indicator">
+                <div class="status-dot" id="connectionDot"></div>
+                <span id="connectionStatus">Initializing...</span>
+            </div>
+            <span id="sceneInfo">Scene: Loading... | Entities: 0 | FPS: 0</span>
+        </div>
+        
+        <div class="status-right">
+            <span id="memoryInfo">Memory: 0MB | GPU: 0%</span>
+            <span id="collaboratorInfo">👤 Solo</span>
+        </div>
+    </div>
+
+    <!-- Project Creation Modal -->
+    <div class="modal-overlay" id="projectModal">
+        <div class="modal">
+            <h2 class="modal-title">Create New Project</h2>
+            <div class="modal-content">
+                <div class="property-group">
+                    <div class="property-label">Project Name</div>
+                    <input type="text" class="property-input" placeholder="My Awesome Game" id="projectName">
+                </div>
+                
+                <div class="property-group">
+                    <div class="property-label">Template</div>
+                    <select class="property-input" id="projectTemplate">
+                        <option value="blank">Blank Project</option>
+                        <option value="platformer">2D Platformer</option>
+                        <option value="rpg">RPG Adventure</option>
+                        <option value="puzzle">Puzzle Game</option>
+                        <option value="shooter">Space Shooter</option>
+                        <option value="racing">Racing Game</option>
+                    </select>
+                </div>
+                
+                <div class="property-group">
+                    <div class="property-label">Description</div>
+                    <textarea class="property-input" rows="3" placeholder="Describe your game idea..." id="projectDescription"></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn" onclick="closeModal('projectModal')">Cancel</button>
+                <button class="btn primary" onclick="createProject()">Create Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load all the actual implementation files -->
+    <script>
+        // Embedded DreamEmulator (simplified version for this demo)
+        window.dreamEmulator = {
+            wasmRunCode: function(code) {
+                console.log('Executing Lua-like code:', code);
+                // Simplified script execution
+                return true;
+            }
+        };
+    </script>
+
+    <!-- Load Engine Core -->
+    <script>
+        // Advanced ECS Game Engine Core - Production Version
+        class EngineCore {
+            constructor() {
+                this.entities = new Map();
+                this.components = new Map();
+                this.systems = new Map();
+                this.scenes = new Map();
+                this.currentScene = null;
+                this.nextEntityId = 1;
+                this.running = false;
+                this.lastTime = 0;
+                this.deltaTime = 0;
+                this.frameCount = 0;
+                this.fps = 60;
+                
+                // Performance monitoring
+                this.performanceMetrics = {
+                    frameTime: 0,
+                    systemTime: new Map(),
+                    memoryUsage: 0,
+                    drawCalls: 0
+                };
+                
+                // Event system
+                this.eventListeners = new Map();
+                
+                this.initializeCoreSystems();
+            }
+            
+            initializeCoreSystems() {
+                // Register core component types
+                this.registerComponent('Transform', {
+                    x: 0, y: 0, z: 0,
+                    rotation: 0, scaleX: 1, scaleY: 1,
+                    parent: null, children: []
+                });
+                
+                this.registerComponent('Sprite', {
+                    texture: null, frame: 0,
+                    width: 32, height: 32,
+                    visible: true, alpha: 1,
+                    tint: 0xFFFFFF, blendMode: 'normal'
+                });
+                
+                this.registerComponent('Physics', {
+                    velocity: { x: 0, y: 0 },
+                    acceleration: { x: 0, y: 0 },
+                    mass: 1, friction: 0.98,
+                    bounceX: 1, bounceY: 1,
+                    gravity: 0, maxVelocity: 500
+                });
+                
+                this.registerComponent('Script', {
+                    source: '', compiled: null,
+                    variables: {}, active: true
+                });
+                
+                // Register core systems
+                this.registerSystem('RenderSystem', new RenderSystem(this));
+                this.registerSystem('PhysicsSystem', new PhysicsSystem(this));
+            }
+            
+            // Entity Management
+            createEntity(template = {}) {
+                const entityId = this.nextEntityId++;
+                const entity = { id: entityId, components: new Set(), active: true };
+                this.entities.set(entityId, entity);
+                
+                // Apply template
+                for (const [componentType, data] of Object.entries(template)) {
+                    this.addComponent(entityId, componentType, data);
+                }
+                
+                this.emit('entityCreated', { entityId, entity });
+                return entityId;
+            }
+            
+            destroyEntity(entityId) {
+                const entity = this.entities.get(entityId);
+                if (!entity) return;
+                
+                // Remove all components
+                for (const componentType of entity.components) {
+                    this.removeComponent(entityId, componentType);
+                }
+                
+                this.entities.delete(entityId);
+                this.emit('entityDestroyed', { entityId });
+            }
+            
+            // Component Management
+            registerComponent(type, defaultData = {}) {
+                if (!this.components.has(type)) {
+                    this.components.set(type, new Map());
+                }
+                this.components.get(type).defaultData = defaultData;
+            }
+            
+            addComponent(entityId, type, data = {}) {
+                const entity = this.entities.get(entityId);
+                if (!entity) return false;
+                
+                if (!this.components.has(type)) {
+                    this.registerComponent(type);
+                }
+                
+                const componentMap = this.components.get(type);
+                const defaultData = componentMap.defaultData || {};
+                const componentData = { ...defaultData, ...data };
+                
+                componentMap.set(entityId, componentData);
+                entity.components.add(type);
+                
+                this.emit('componentAdded', { entityId, type, data: componentData });
+                return true;
+            }
+            
+            removeComponent(entityId, type) {
+                const entity = this.entities.get(entityId);
+                if (!entity) return false;
+                
+                const componentMap = this.components.get(type);
+                if (componentMap && componentMap.has(entityId)) {
+                    componentMap.delete(entityId);
+                    entity.components.delete(type);
+                    this.emit('componentRemoved', { entityId, type });
+                    return true;
+                }
+                return false;
+            }
+            
+            getComponent(entityId, type) {
+                const componentMap = this.components.get(type);
+                return componentMap ? componentMap.get(entityId) : null;
+            }
+            
+            updateComponent(entityId, type, data) {
+                const componentMap = this.components.get(type);
+                if (componentMap && componentMap.has(entityId)) {
+                    const current = componentMap.get(entityId);
+                    Object.assign(current, data);
+                    this.emit('componentUpdated', { entityId, type, data: current });
+                    return true;
+                }
+                return false;
+            }
+            
+            // Query System
+            query(...componentTypes) {
+                const results = [];
+                for (const [entityId, entity] of this.entities) {
+                    if (!entity.active) continue;
+                    
+                    let hasAll = true;
+                    for (const type of componentTypes) {
+                        if (!entity.components.has(type)) {
+                            hasAll = false;
+                            break;
+                        }
+                    }
+                    
+                    if (hasAll) {
+                        const entityData = { id: entityId };
+                        for (const type of componentTypes) {
+                            entityData[type] = this.getComponent(entityId, type);
+                        }
+                        results.push(entityData);
+                    }
+                }
+                return results;
+            }
+            
+            // System Management
+            registerSystem(name, system) {
+                this.systems.set(name, system);
+                system.engine = this;
+                if (system.init) system.init();
+            }
+            
+            // Main Loop
+            start() {
+                if (this.running) return;
+                this.running = true;
+                this.lastTime = performance.now();
+                this.gameLoop();
+                this.emit('engineStarted');
+            }
+            
+            stop() {
+                this.running = false;
+                this.emit('engineStopped');
+            }
+            
+            gameLoop() {
+                if (!this.running) return;
+                
+                const currentTime = performance.now();
+                this.deltaTime = (currentTime - this.lastTime) / 1000;
+                this.lastTime = currentTime;
+                this.frameCount++;
+                
+                // Update systems
+                for (const [name, system] of this.systems) {
+                    if (!system.active) continue;
+                    try {
+                        system.update(this.deltaTime);
+                    } catch (error) {
+                        console.error(`System ${name} error:`, error);
+                    }
+                }
+                
+                // Calculate FPS
+                if (this.frameCount % 60 === 0) {
+                    this.fps = Math.round(1 / this.deltaTime);
+                    this.emit('performanceUpdate', this.performanceMetrics);
+                }
+                
+                requestAnimationFrame(() => this.gameLoop());
+            }
+            
+            // Event System
+            on(event, callback) {
+                if (!this.eventListeners.has(event)) {
+                    this.eventListeners.set(event, new Set());
+                }
+                this.eventListeners.get(event).add(callback);
+            }
+            
+            off(event, callback) {
+                const listeners = this.eventListeners.get(event);
+                if (listeners) {
+                    listeners.delete(callback);
+                }
+            }
+            
+            emit(event, data = {}) {
+                const listeners = this.eventListeners.get(event);
+                if (listeners) {
+                    for (const callback of listeners) {
+                        try {
+                            callback(data);
+                        } catch (error) {
+                            console.error(`Event listener error for ${event}:`, error);
+                        }
+                    }
+                }
+            }
+            
+            // Serialization
+            serialize() {
+                const data = {
+                    entities: [],
+                    scene: this.currentScene ? this.currentScene.name : null
+                };
+                
+                for (const [entityId, entity] of this.entities) {
+                    const entityData = { id: entityId, components: {} };
+                    for (const componentType of entity.components) {
+                        entityData.components[componentType] = this.getComponent(entityId, componentType);
+                    }
+                    data.entities.push(entityData);
+                }
+                
+                return data;
+            }
+            
+            deserialize(data) {
+                this.entities.clear();
+                this.nextEntityId = 1;
+                
+                for (const entityData of data.entities) {
+                    const entityId = this.createEntity();
+                    for (const [componentType, componentData] of Object.entries(entityData.components)) {
+                        this.addComponent(entityId, componentType, componentData);
+                    }
+                }
+            }
+        }
+
+        // Render System
+        class RenderSystem {
+            constructor(engine) {
+                this.engine = engine;
+                this.active = true;
+                this.canvas = null;
+                this.ctx = null;
+                this.camera = { x: 0, y: 0, zoom: 1 };
+            }
+            
+            init() {
+                this.canvas = document.getElementById('gameCanvas');
+                if (this.canvas) {
+                    this.ctx = this.canvas.getContext('2d');
+                }
+            }
+            
+            update(deltaTime) {
+                if (!this.ctx) return;
+                
+                // Clear canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw grid if enabled
+                if (window.app && window.app.visualEditor && window.app.visualEditor.grid.enabled) {
+                    this.drawGrid();
+                }
+                
+                // Get renderable entities
+                const entities = this.engine.query('Transform', 'Sprite');
+                
+                // Sort by z-index
+                entities.sort((a, b) => (a.Transform.z || 0) - (b.Transform.z || 0));
+                
+                for (const entity of entities) {
+                    this.renderSprite(entity);
+                }
+            }
+            
+            drawGrid() {
+                const gridSize = 32;
+                this.ctx.strokeStyle = 'rgba(139, 69, 19, 0.2)';
+                this.ctx.lineWidth = 1;
+                this.ctx.beginPath();
+                
+                for (let x = 0; x <= this.canvas.width; x += gridSize) {
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
+                }
+                
+                for (let y = 0; y <= this.canvas.height; y += gridSize) {
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
+                }
+                
+                this.ctx.stroke();
+            }
+            
+            renderSprite(entity) {
+                const transform = entity.Transform;
+                const sprite = entity.Sprite;
+                
+                if (!sprite.visible || sprite.alpha <= 0) return;
+                
+                this.ctx.save();
+                
+                // Apply transformations
+                this.ctx.translate(transform.x, transform.y);
+                this.ctx.rotate(transform.rotation);
+                this.ctx.scale(transform.scaleX, transform.scaleY);
+                this.ctx.globalAlpha = sprite.alpha;
+                
+                // Render sprite
+                this.ctx.fillStyle = `hsl(${(sprite.tint || 0) % 360}, 70%, 50%)`;
+                this.ctx.fillRect(-sprite.width / 2, -sprite.height / 2, sprite.width, sprite.height);
+                
+                this.ctx.restore();
+            }
+        }
+
+        // Physics System
+        class PhysicsSystem {
+            constructor(engine) {
+                this.engine = engine;
+                this.active = true;
+            }
+            
+            update(deltaTime) {
+                const entities = this.engine.query('Transform', 'Physics');
+                
+                for (const entity of entities) {
+                    const transform = entity.Transform;
+                    const physics = entity.Physics;
+                    
+                    // Apply gravity
+                    physics.velocity.y += physics.gravity * deltaTime;
+                    
+                    // Apply acceleration
+                    physics.velocity.x += physics.acceleration.x * deltaTime;
+                    physics.velocity.y += physics.acceleration.y * deltaTime;
+                    
+                    // Apply friction
+                    physics.velocity.x *= physics.friction;
+                    physics.velocity.y *= physics.friction;
+                    
+                    // Update position
+                    transform.x += physics.velocity.x * deltaTime;
+                    transform.y += physics.velocity.y * deltaTime;
+                }
+            }
+        }
+
+        window.EngineCore = EngineCore;
+        window.RenderSystem = RenderSystem;
+        window.PhysicsSystem = PhysicsSystem;
+    </script>
+
+    <!-- Load Asset Manager -->
+    <script>
+        // Simplified Asset Manager for demo
+        class AssetManager {
+            constructor() {
+                this.assets = new Map();
+                this.loadingPromises = new Map();
+                this.cache = new Map();
+            }
+            
+            async load(path, type = 'auto') {
+                if (this.cache.has(path)) {
+                    return this.cache.get(path);
+                }
+                
+                if (this.loadingPromises.has(path)) {
+                    return this.loadingPromises.get(path);
+                }
+                
+                const promise = this.performLoad(path, type);
+                this.loadingPromises.set(path, promise);
+                
+                try {
+                    const asset = await promise;
+                    this.cache.set(path, asset);
+                    this.loadingPromises.delete(path);
+                    return asset;
+                } catch (error) {
+                    this.loadingPromises.delete(path);
+                    throw error;
+                }
+            }
+            
+            async performLoad(path, type) {
+                if (type === 'image' || path.match(/\.(png|jpg|jpeg|gif)$/i)) {
+                    return this.loadImage(path);
+                }
+                return { path, type, data: null };
+            }
+            
+            loadImage(path) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve({
+                        element: img,
+                        width: img.width,
+                        height: img.height,
+                        type: 'image'
+                    });
+                    img.onerror = reject;
+                    img.src = path;
+                });
+            }
+        }
+
+        window.AssetManager = AssetManager;
+    </script>
+
+    <!-- Load Collaboration System -->
+    <script>
+        // Simplified Collaboration System for demo
+        class CollaborationSystem {
+            constructor(engine) {
+                this.engine = engine;
+                this.connected = false;
+                this.users = new Map();
+                this.socket = null;
+            }
+            
+            connect(url, projectId) {
+                console.log(`Attempting to connect to collaboration server: ${url}/${projectId}`);
+                // Simulate connection for demo
+                setTimeout(() => {
+                    this.connected = true;
+                    this.engine.emit('collaboration:connected');
+                }, 1000);
+            }
+            
+            disconnect() {
+                this.connected = false;
+                this.engine.emit('collaboration:disconnected');
+            }
+            
+            isConnected() {
+                return this.connected;
+            }
+        }
+
+        window.CollaborationSystem = CollaborationSystem;
+    </script>
+
+    <!-- Load Visual Editor -->
+    <script>
+        // Simplified Visual Editor for demo
+        class VisualEditor {
+            constructor(engine) {
+                this.engine = engine;
+                this.currentTool = 'select';
+                this.grid = { enabled: true, size: 32 };
+                this.selection = new Set();
+                this.camera = { x: 0, y: 0, zoom: 1 };
+                
+                this.setupEventHandlers();
+            }
+            
+            setupEventHandlers() {
+                const canvas = document.getElementById('gameCanvas');
+                if (canvas) {
+                    canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
+                }
+            }
+            
+            handleCanvasClick(e) {
+                const rect = e.target.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Create a new entity at click position
+                if (this.currentTool === 'select' && e.ctrlKey) {
+                    const entityId = this.engine.createEntity({
+                        Transform: { x, y, z: 0 },
+                        Sprite: { 
+                            width: 32, 
+                            height: 32, 
+                            tint: Math.random() * 360,
+                            visible: true,
+                            alpha: 1
+                        }
+                    });
+                    
+                    this.selectEntity(entityId);
+                    this.updateUI();
+                }
+            }
+            
+            selectEntity(entityId) {
+                this.selection.clear();
+                this.selection.add(entityId);
+                this.updateInspector();
+            }
+            
+            updateInspector() {
+                const panel = document.getElementById('selectedEntityInfo');
+                if (!panel) return;
+                
+                if (this.selection.size === 0) {
+                    panel.innerHTML = '<h3>No Entity Selected</h3><p>Select an entity in the scene to edit its properties.</p>';
+                    return;
+                }
+                
+                const entityId = Array.from(this.selection)[0];
+                const transform = this.engine.getComponent(entityId, 'Transform');
+                const sprite = this.engine.getComponent(entityId, 'Sprite');
+                
+                panel.innerHTML = `
+                    <h3>Entity ${entityId}</h3>
+                    <div class="property-group">
+                        <div class="property-label">Transform</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <input type="number" class="property-input" placeholder="X" value="${transform?.x || 0}" onchange="updateEntityProperty(${entityId}, 'Transform', 'x', this.value)">
+                            <input type="number" class="property-input" placeholder="Y" value="${transform?.y || 0}" onchange="updateEntityProperty(${entityId}, 'Transform', 'y', this.value)">
+                        </div>
+                    </div>
+                    ${sprite ? `
+                    <div class="property-group">
+                        <div class="property-label">Sprite</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <input type="number" class="property-input" placeholder="Width" value="${sprite.width}" onchange="updateEntityProperty(${entityId}, 'Sprite', 'width', this.value)">
+                            <input type="number" class="property-input" placeholder="Height" value="${sprite.height}" onchange="updateEntityProperty(${entityId}, 'Sprite', 'height', this.value)">
+                        </div>
+                        <input type="range" class="property-input" min="0" max="360" value="${sprite.tint || 0}" onchange="updateEntityProperty(${entityId}, 'Sprite', 'tint', this.value)" style="margin-top: 8px;">
+                    </div>
+                    ` : ''}
+                `;
+            }
+            
+            updateUI() {
+                this.updateSceneTree();
+                this.updateInspector();
+            }
+            
+            updateSceneTree() {
+                const tree = document.getElementById('sceneTree');
+                if (!tree) return;
+                
+                const entities = this.engine.query('Transform');
+                tree.innerHTML = '';
+                
+                entities.forEach(entity => {
+                    const item = document.createElement('div');
+                    item.className = 'tree-item';
+                    if (this.selection.has(entity.id)) {
+                        item.classList.add('selected');
+                    }
+                    
+                    item.innerHTML = `
+                        <div class="tree-icon">📦</div>
+                        <span>Entity ${entity.id}</span>
+                    `;
+                    
+                    item.onclick = () => {
+                        this.selectEntity(entity.id);
+                        this.updateUI();
+                    };
+                    
+                    tree.appendChild(item);
+                });
+            }
+        }
+
+        window.VisualEditor = VisualEditor;
+    </script>
+
+    <!-- Main Application Logic -->
+    <script>
+        // Global application state
+        let app = {
+            engine: null,
+            visualEditor: null,
+            collaboration: null,
+            assetManager: null,
+            currentProject: null,
+            isLoading: true
+        };
+
+        // Initialize the application
+        async function initializeApp() {
+            console.log('🚀 Initializing DreamMaker Platform...');
+            
+            try {
+                // Show loading indicator
+                document.getElementById('loadingIndicator').style.display = 'block';
+                
+                // Initialize core systems
+                app.engine = new EngineCore();
+                app.assetManager = new AssetManager();
+                app.collaboration = new CollaborationSystem(app.engine);
+                app.visualEditor = new VisualEditor(app.engine);
+                
+                // Setup engine event listeners
+                setupEngineEventListeners();
+                
+                // Setup UI components
+                setupEventHandlers();
+                
+                console.log('✅ All systems initialized successfully');
+                
+                // Show engine status
+                updateEngineStatus();
+                document.getElementById('engineStatus').classList.add('show');
+                
+                // Hide loading and show welcome screen
+                setTimeout(() => {
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                    app.isLoading = false;
+                    showWelcomeScreen();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('❌ Failed to initialize application:', error);
+                showErrorMessage('Failed to initialize DreamMaker. Please refresh the page.');
+            }
+        }
+
+        function setupEngineEventListeners() {
+            // Listen to engine events
+            app.engine.on('entityCreated', (data) => {
+                console.log('Entity created:', data.entityId);
+                app.visualEditor.updateUI();
+                updateEngineStatus();
+            });
+            
+            app.engine.on('entityDestroyed', (data) => {
+                console.log('Entity destroyed:', data.entityId);
+                app.visualEditor.updateUI();
+                updateEngineStatus();
+            });
+            
+            app.engine.on('performanceUpdate', (data) => {
+                updateEngineStatus();
+            });
+            
+            app.engine.on('collaboration:connected', () => {
+                updateConnectionStatus('Connected', true);
+            });
+            
+            app.engine.on('collaboration:disconnected', () => {
+                updateConnectionStatus('Disconnected', false);
+            });
+        }
+
+        function updateEngineStatus() {
+            const engineState = document.getElementById('engineState');
+            const engineFPS = document.getElementById('engineFPS');
+            const engineEntities = document.getElementById('engineEntities');
+            const engineMemory = document.getElementById('engineMemory');
+            const sceneInfo = document.getElementById('sceneInfo');
+            
+            if (engineState) {
+                engineState.textContent = app.engine.running ? 'Running' : 'Stopped';
+            }
+            
+            if (engineFPS) {
+                engineFPS.textContent = app.engine.fps;
+            }
+            
+            if (engineEntities) {
+                engineEntities.textContent = app.engine.entities.size;
+            }
+            
+            if (engineMemory) {
+                const memoryMB = Math.round(performance.memory ? performance.memory.usedJSHeapSize / 1024 / 1024 : 0);
+                engineMemory.textContent = memoryMB + 'MB';
+            }
+            
+            if (sceneInfo) {
+                sceneInfo.textContent = `Scene: ${app.currentProject?.name || 'None'} | Entities: ${app.engine.entities.size} | FPS: ${app.engine.fps}`;
+            }
+        }
+
+        function updateConnectionStatus(status, connected) {
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectionDot = document.getElementById('connectionDot');
+            
+            if (connectionStatus) {
+                connectionStatus.textContent = status;
+            }
+            
+            if (connectionDot) {
+                connectionDot.style.background = connected ? 'var(--success-color)' : 'var(--error-color)';
+            }
+        }
+
+        function showWelcomeScreen() {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const mainApp = document.getElementById('mainApp');
+            
+            welcomeScreen.style.display = 'flex';
+            mainApp.style.display = 'none';
+        }
+
+        function hideWelcomeScreen() {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const mainApp = document.getElementById('mainApp');
+            
+            welcomeScreen.style.opacity = '0';
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+                mainApp.style.display = 'grid';
+                
+                // Start the engine
+                app.engine.start();
+                app.visualEditor.updateUI();
+                
+                // Connect collaboration
+                app.collaboration.connect('ws://localhost:8080', generateProjectId());
+            }, 500);
+        }
+
+        // ============ PROJECT MANAGEMENT ============
+
+        function createNewProject() {
+            showModal('projectModal');
+        }
+
+        function createProject() {
+            const name = document.getElementById('projectName').value || 'Untitled Project';
+            const template = document.getElementById('projectTemplate').value;
+            const description = document.getElementById('projectDescription').value;
+            
+            app.currentProject = {
+                name,
+                template,
+                description,
+                created: new Date(),
+                entities: [],
+                scenes: ['Main Scene'],
+                assets: []
+            };
+            
+            // Load template if specified
+            if (template !== 'blank') {
+                loadProjectTemplate(template);
+            }
+            
+            closeModal('projectModal');
+            hideWelcomeScreen();
+            
+            console.log('Project created:', app.currentProject);
+        }
+
+        function loadProjectTemplate(template) {
+            console.log(`Loading template: ${template}`);
+            
+            const templates = {
+                platformer: () => {
+                    // Create player
+                    const playerId = app.engine.createEntity({
+                        Transform: { x: 100, y: 100, z: 0 },
+                        Sprite: { width: 32, height: 32, tint: 120, visible: true, alpha: 1 },
+                        Physics: { 
+                            velocity: { x: 0, y: 0 },
+                            acceleration: { x: 0, y: 0 },
+                            mass: 1,
+                            gravity: 300
+                        }
+                    });
+                    
+                    // Create platform
+                    app.engine.createEntity({
+                        Transform: { x: 200, y: 200, z: 0 },
+                        Sprite: { width: 128, height: 32, tint: 60, visible: true, alpha: 1 }
+                    });
+                    
+                    // Create enemy
+                    app.engine.createEntity({
+                        Transform: { x: 300, y: 150, z: 0 },
+                        Sprite: { width: 24, height: 24, tint: 0, visible: true, alpha: 1 },
+                        Physics: { 
+                            velocity: { x: 50, y: 0 },
+                            acceleration: { x: 0, y: 0 },
+                            mass: 0.5
+                        }
+                    });
+                    
+                    app.visualEditor.selectEntity(playerId);
+                },
+                
+                rpg: () => {
+                    // Create hero
+                    const heroId = app.engine.createEntity({
+                        Transform: { x: 400, y: 300, z: 0 },
+                        Sprite: { width: 32, height: 32, tint: 200, visible: true, alpha: 1 }
+                    });
+                    
+                    // Create NPC
+                    app.engine.createEntity({
+                        Transform: { x: 200, y: 200, z: 0 },
+                        Sprite: { width: 32, height: 32, tint: 280, visible: true, alpha: 1 }
+                    });
+                    
+                    // Create chest
+                    app.engine.createEntity({
+                        Transform: { x: 500, y: 400, z: 0 },
+                        Sprite: { width: 24, height: 24, tint: 30, visible: true, alpha: 1 }
+                    });
+                    
+                    app.visualEditor.selectEntity(heroId);
+                }
+            };
+            
+            if (templates[template]) {
+                templates[template]();
+                app.visualEditor.updateUI();
+            }
+        }
+
+        function openProject() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json,.dreammaker';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    loadProjectFile(file);
+                }
+            };
+            input.click();
+        }
+
+        function loadProjectFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const projectData = JSON.parse(e.target.result);
+                    app.currentProject = projectData;
+                    app.engine.deserialize(projectData.gameData || {});
+                    hideWelcomeScreen();
+                    console.log('Project loaded successfully');
+                } catch (error) {
+                    console.error('Failed to load project:', error);
+                    showErrorMessage('Invalid project file');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function saveProject() {
+            if (!app.currentProject) {
+                showErrorMessage('No project to save');
+                return;
+            }
+            
+            const projectData = {
+                ...app.currentProject,
+                gameData: app.engine.serialize(),
+                lastModified: new Date()
+            };
+            
+            const blob = new Blob([JSON.stringify(projectData, null, 2)], {
+                type: 'application/json'
+            });
+            
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${app.currentProject.name}.dreammaker`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            console.log('Project saved');
+        }
+
+        // ============ TOOL MANAGEMENT ============
+
+        function setTool(tool) {
+            app.visualEditor.currentTool = tool;
+            
+            // Update tool button states
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            console.log('Tool set to:', tool);
+        }
+
+        function toggleGrid() {
+            app.visualEditor.grid.enabled = !app.visualEditor.grid.enabled;
+            const btn = document.getElementById('gridBtn');
+            btn.classList.toggle('active', app.visualEditor.grid.enabled);
+            console.log('Grid toggled:', app.visualEditor.grid.enabled);
+        }
+
+        function toggleSnap() {
+            // Implement snap to grid
+            console.log('Snap toggled');
+        }
+
+        function updateZoom(value) {
+            app.visualEditor.camera.zoom = parseFloat(value);
+            document.getElementById('zoomDisplay').textContent = `Zoom: ${Math.round(value * 100)}%`;
+        }
+
+        // ============ GAME CONTROL ============
+
+        function playGame() {
+            console.log('Starting game...');
+            if (!app.engine.running) {
+                app.engine.start();
+            }
+            
+            // Highlight play button
+            event.target.style.background = 'linear-gradient(135deg, var(--accent-tertiary) 0%, #16a34a 100%)';
+            setTimeout(() => {
+                event.target.style.background = '';
+            }, 200);
+        }
+
+        function debugGame() {
+            console.log('Debug mode activated');
+            // Could open debug panels, show collision boxes, etc.
+        }
+
+        function buildGame() {
+            console.log('Building game...');
+            // Export game for web, desktop, mobile
+        }
+
+        function shareProject() {
+            console.log('Sharing project...');
+            // Generate shareable link
+        }
+
+        function publishGame() {
+            console.log('Publishing game...');
+            // Upload to DreamMaker marketplace
+        }
+
+        // ============ UI HELPERS ============
+
+        function setupEventHandlers() {
+            // Global keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key) {
+                        case 's':
+                            e.preventDefault();
+                            saveProject();
+                            break;
+                        case 'z':
+                            e.preventDefault();
+                            if (e.shiftKey) {
+                                redoAction();
+                            } else {
+                                undoAction();
+                            }
+                            break;
+                        case 'n':
+                            e.preventDefault();
+                            createNewProject();
+                            break;
+                        case 'o':
+                            e.preventDefault();
+                            openProject();
+                            break;
+                    }
+                }
+                
+                // Tool shortcuts
+                const toolShortcuts = {
+                    'v': 'select',
+                    'm': 'move',
+                    'r': 'rotate',
+                    's': 'scale',
+                    'b': 'paint',
+                    'e': 'erase',
+                    'f': 'fill',
+                    'g': 'grid'
+                };
+                
+                if (toolShortcuts[e.key.toLowerCase()]) {
+                    if (e.key.toLowerCase() === 'g') {
+                        toggleGrid();
+                    } else {
+                        // Find and click the tool button
+                        const toolBtn = document.querySelector(`[onclick="setTool('${toolShortcuts[e.key.toLowerCase()]}')"]`);
+                        if (toolBtn) {
+                            toolBtn.click();
+                        }
+                    }
+                }
+            });
+            
+            // Update engine status periodically
+            setInterval(updateEngineStatus, 1000);
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId + 'Section');
+            const toggle = document.getElementById(sectionId + 'Toggle');
+            const isVisible = section.style.display !== 'none';
+            
+            section.style.display = isVisible ? 'none' : 'block';
+            toggle.textContent = isVisible ? '▶' : '▼';
+        }
+
+        function switchPanel(panelName) {
+            // Update tab states
+            document.querySelectorAll('.panel-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            console.log(`Switching to ${panelName} panel`);
+        }
+
+        function addComponent(componentType) {
+            if (app.visualEditor.selection.size > 0) {
+                const entityId = Array.from(app.visualEditor.selection)[0];
+                
+                switch (componentType) {
+                    case 'Transform':
+                        app.engine.addComponent(entityId, 'Transform', { x: 0, y: 0, z: 0 });
+                        break;
+                    case 'Sprite':
+                        app.engine.addComponent(entityId, 'Sprite', { 
+                            width: 32, height: 32, tint: Math.random() * 360 
+                        });
+                        break;
+                    case 'Physics':
+                        app.engine.addComponent(entityId, 'Physics', {
+                            velocity: { x: 0, y: 0 },
+                            acceleration: { x: 0, y: 0 },
+                            mass: 1
+                        });
+                        break;
+                    case 'Script':
+                        app.engine.addComponent(entityId, 'Script', {
+                            source: '// Add your script here',
+                            active: true
+                        });
+                        break;
+                }
+                
+                app.visualEditor.updateInspector();
+                console.log(`Added ${componentType} to entity ${entityId}`);
+            } else {
+                console.log('No entity selected');
+            }
+        }
+
+        function updateEntityProperty(entityId, componentType, property, value) {
+            const numValue = isNaN(value) ? value : parseFloat(value);
+            app.engine.updateComponent(entityId, componentType, { [property]: numValue });
+            console.log(`Updated entity ${entityId} ${componentType}.${property} = ${numValue}`);
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('show');
+        }
+
+        function showErrorMessage(message) {
+            console.error(message);
+            // Could implement toast notifications here
+        }
+
+        function undoAction() {
+            console.log('Undo action');
+        }
+
+        function redoAction() {
+            console.log('Redo action');
+        }
+
+        function browseTemplates() {
+            console.log('Browsing templates...');
+        }
+
+        function startTutorial() {
+            console.log('Starting tutorial...');
+        }
+
+        function generateProjectId() {
+            return 'proj_' + Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            setTimeout(initializeApp, 100);
+        });
+
+        // Update connection status on load
+        updateConnectionStatus('Initializing...', false);
+    </script>
+</body>
+</html>

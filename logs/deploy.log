@@ -1,0 +1,13 @@
+[2025-07-02 11:02:04] [INFO] === DreamMaker Deployment Script Started ===
+[2025-07-02 11:02:04] [INFO] Timestamp: Wed 02 Jul 2025 11:02:04 AM EDT
+[2025-07-02 11:02:04] [INFO] User: kquant
+[2025-07-02 11:02:04] [INFO] Project root: /home/kquant/Documents/code/zig-lua-sandbox
+[2025-07-02 11:02:04] [INFO] Log file: /home/kquant/Documents/code/zig-lua-sandbox/logs/deploy.log
+[2025-07-02 11:02:04] [INFO] Arguments: 
+[2025-07-02 11:02:04] [INFO] Starting DreamMaker Platform deployment...
+[2025-07-02 11:02:04] [INFO] Deploy mode: full
+[2025-07-02 11:02:04] [INFO] Target: production
+[2025-07-02 11:02:04] [ERROR] This script requires root privileges or write access to /opt/dreammaker
+[2025-07-02 11:02:04] [ERROR] Deployment failed! Check logs at /home/kquant/Documents/code/zig-lua-sandbox/logs/deploy.log
+[2025-07-02 11:02:04] [INFO] Performing cleanup...
+[2025-07-02 11:02:04] [INFO] Cleanup complete
